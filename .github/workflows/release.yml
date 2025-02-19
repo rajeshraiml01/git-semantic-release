@@ -27,6 +27,38 @@ jobs:
             @semantic-release/exec \
             conventional-changelog-conventionalcommits
 
+      - name: Configuration
+        run: |
+          # Setup Semantic Release configuration
+          if [ -f ".releaserc" ]; then
+            echo "File .releaserc exists"
+          else
+            cat <<EOT >> .releaserc
+          {
+            "branches": ["main"],
+            "tagFormat": "prodrelease-v${version}",
+            "plugins": [
+              ["@semantic-release/commit-analyzer"],
+              ["@semantic-release/release-notes-generator"],
+              [
+                "@semantic-release/github",
+                {
+                  "releaseName": "prodrelease-v${nextRelease.version}"
+                }
+              ],
+              [
+                "@semantic-release/git",
+                {
+                  "assets": ["package.json"],
+                  "message": "chore(release): prodrelease-v${nextRelease.version} [skip ci]"
+                }
+              ]
+            ]
+          }
+          EOT
+          echo "Default .releaserc created"
+          fi
+
       - name: Run Semantic Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
