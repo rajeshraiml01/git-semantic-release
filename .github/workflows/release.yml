@@ -19,8 +19,13 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install Dependencies
-        run: npm ci
+      - name: Install plugins
+        run: |
+          npm install \
+            @semantic-release/git \
+            @semantic-release/changelog \
+            @semantic-release/exec \
+            conventional-changelog-conventionalcommits
 
       - name: Run Semantic Release
         env:
